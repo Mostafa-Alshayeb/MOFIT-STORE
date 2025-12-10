@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { connect } from "@/lib/mongodb";
+import { connectToDatabase } from "@/lib/mongodb";
 
 export async function POST(request: NextRequest) {
   try {
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Connect to MongoDB to save order
-    const db = await connect();
+    const db = await connectToDatabase();
     if (!db) {
       return NextResponse.json(
         { error: "Database connection failed" },
