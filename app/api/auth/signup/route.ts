@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
     // Check if user already exists
     const existingUser = await usersCollection.findOne({ email });
     if (existingUser) {
+      console.log("User already exists");
       return NextResponse.json(
         { error: "User already exists" },
         { status: 400 }
@@ -52,7 +53,7 @@ export async function POST(request: NextRequest) {
 
     // Create JWT token
     const token = createJWT({
-      userId: result.insertedId.toString(),
+      id: result.insertedId.toString(),
       email,
       name,
     });

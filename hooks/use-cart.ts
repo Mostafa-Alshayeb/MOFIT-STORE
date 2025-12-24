@@ -11,10 +11,8 @@ import {
   getCartTotal,
   getCartItemCount,
 } from "@/lib/storage";
-import { useAuth } from "./use-auth";
 
 export function useCart() {
-  const { isAuthenticated } = useAuth();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [mounted, setMounted] = useState(false);
 
@@ -22,24 +20,6 @@ export function useCart() {
     setMounted(true);
     setCart(getCart());
   }, []);
-
-  useEffect(() => {
-    if (mounted && isAuthenticated && cart.length > 0) {
-      saveCartToServer();
-    }
-  }, [cart, isAuthenticated, mounted]);
-
-  const saveCartToServer = async () => {
-    try {
-      await fetch("/api/user/cart", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cart }),
-      });
-    } catch (error) {
-      console.error("Error saving cart to server:", error);
-    }
-  };
 
   const addToCart = (item: CartItem) => {
     addToCartStorage(item);

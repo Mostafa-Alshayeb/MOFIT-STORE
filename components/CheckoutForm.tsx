@@ -414,7 +414,7 @@ export function CheckoutForm({
           <div className="border-t border-border/40 pt-2">
             <div className="flex justify-between font-bold">
               <span>Total</span>
-              <span>${finalTotal.toFixed(2)}</span>
+              <span>${(finalTotal - finalTotal * 0.1).toFixed(2)}</span>
             </div>
           </div>
         </CardContent>

@@ -1,4 +1,4 @@
-import type { CartItem, User, AuthState, Product } from "./types";
+import type { CartItem, User, AuthState } from "./types";
 
 // Cart Management
 export const getCart = (): CartItem[] => {
@@ -127,3 +127,26 @@ export const signup = (
   saveAuthState({ isAuthenticated: true, user: newUser });
   return true;
 };
+// Cart functions موجودة عندك
+export function getFavorites(): string[] {
+  const stored = localStorage.getItem("favorites");
+  return stored ? JSON.parse(stored) : [];
+}
+
+export function addToFavorites(id: string) {
+  const favorites = getFavorites();
+  if (!favorites.includes(id)) {
+    favorites.push(id);
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+  }
+}
+
+export function removeFromFavorites(id: string) {
+  const favorites = getFavorites();
+  const newFavorites = favorites.filter((favId) => favId !== id);
+  localStorage.setItem("favorites", JSON.stringify(newFavorites));
+}
+
+export function clearFavorites() {
+  localStorage.removeItem("favorites");
+}

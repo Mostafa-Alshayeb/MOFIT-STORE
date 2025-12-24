@@ -147,7 +147,7 @@ export default function CheckoutPage() {
             <CheckoutForm
               cartTotal={total}
               cartItems={cart}
-              userId={user?._id || ""}
+              userId={user?.id || ""}
               userName={user?.name || ""}
               userEmail={user?.email || ""}
               onSuccess={(orderId) => {

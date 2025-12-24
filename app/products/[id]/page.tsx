@@ -1,3 +1,4 @@
+// content of app/products/[id]/page.tsx
 "use client";
 
 import { useState } from "react";
@@ -5,12 +6,13 @@ import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useCart } from "@/hooks/use-cart";
 import { products } from "@/lib/products-data";
 import { ArrowLeft, Check } from "lucide-react";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
+import { useUserItems } from "@/app/context/UserItemsProvider";
 import { FavoriteButton } from "@/components/FavoriteButton";
+import { useCart } from "@/hooks/use-cart";
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -148,7 +150,7 @@ export default function ProductDetailPage() {
                     {product.sizes.map((size) => (
                       <button
                         key={size}
-                        onClick={() => setSelectedSize(size)}
+                        onClick={() => setSelectedSize(Number(size))}
                         className={`relative flex h-12 items-center justify-center rounded-md border transition-all ${
                           selectedSize === size
                             ? "border-primary bg-primary text-primary-foreground"

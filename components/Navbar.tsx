@@ -3,21 +3,33 @@
 import Link from "next/link";
 import { ShoppingCart, Menu, X, User, Heart } from "lucide-react";
 import { useState } from "react";
-import { useCart } from "@/hooks/use-cart";
-import { useAuth } from "@/hooks";
-import { useFavorites } from "@/hooks/use-favorites";
+
 import { Button } from "@/components/ui/button";
+import { useUserItems } from "@/app/context/UserItemsProvider";
+import { useAuthContext } from "@/app/context/AuthProvider";
+import { useCart } from "@/hooks/use-cart";
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { itemCount, mounted } = useCart();
-  const { isAuthenticated, user, logout, mounted: authMounted } = useAuth();
-  const { favorites } = useFavorites();
 
+  // Auth
+  const {
+    isAuthenticated,
+    user,
+    logout,
+    mounted: authMounted,
+  } = useAuthContext();
+
+  // User Items (cart + favorites)
+  const { favorites, mounted: itemsMounted, getCartItemCount } = useUserItems();
+  const { itemCount, mounted } = useCart();
   const handleLogout = () => {
     logout();
     setMobileMenuOpen(false);
   };
+
+  // allMounted ensures both Auth and Items are loaded
+  const allMounted = authMounted && itemsMounted;
 
   return (
     <nav className="sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -59,33 +71,30 @@ export function Navbar() {
           {/* Right Side Actions */}
           <div className="flex items-center gap-4">
             {/* Auth */}
-            {authMounted && (
-              <>
-                {isAuthenticated && user ? (
-                  <div className="hidden items-center gap-3 md:flex">
-                    <span className="text-sm text-muted-foreground">
-                      Hi, {user.name}
-                    </span>
-                    <Button variant="ghost" size="sm" onClick={handleLogout}>
-                      Logout
-                    </Button>
-                  </div>
-                ) : (
-                  <Link href="/login" className="hidden md:block">
-                    <Button variant="ghost" size="sm">
-                      <User className="mr-2 h-4 w-4" />
-                      Login
-                    </Button>
-                  </Link>
-                )}
-              </>
-            )}
+            {authMounted &&
+              (isAuthenticated && user ? (
+                <div className="hidden items-center gap-3 md:flex">
+                  <span className="text-sm text-muted-foreground">
+                    Hi, {user.name}
+                  </span>
+                  <Button variant="ghost" size="sm" onClick={handleLogout}>
+                    Logout
+                  </Button>
+                </div>
+              ) : (
+                <Link href="/login" className="hidden md:block">
+                  <Button variant="ghost" size="sm">
+                    <User className="mr-2 h-4 w-4" />
+                    Login
+                  </Button>
+                </Link>
+              ))}
 
             {/* Favorites */}
             <Link href="/favorites" className="relative">
               <Button variant="ghost" size="icon">
                 <Heart className="h-5 w-5" />
-                {mounted && favorites.length > 0 && (
+                {allMounted && favorites.length > 0 && (
                   <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
                     {favorites.length}
                   </span>
@@ -152,10 +161,8 @@ export function Navbar() {
               className="block rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-accent"
               onClick={() => setMobileMenuOpen(false)}
             >
-              All Shoes
+              All Products
             </Link>
-
-            {/* Favorites */}
             <Link
               href="/favorites"
               className="block rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-accent"
@@ -164,31 +171,28 @@ export function Navbar() {
               Favorites
             </Link>
 
-            {authMounted && (
-              <>
-                {isAuthenticated && user ? (
-                  <>
-                    <div className="px-3 py-2 text-sm text-muted-foreground">
-                      Hi, {user.name}
-                    </div>
-                    <button
-                      onClick={handleLogout}
-                      className="block w-full rounded-md px-3 py-2 text-left text-base font-medium transition-colors hover:bg-accent"
-                    >
-                      Logout
-                    </button>
-                  </>
-                ) : (
-                  <Link
-                    href="/login"
-                    className="block rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-accent"
-                    onClick={() => setMobileMenuOpen(false)}
+            {authMounted &&
+              (isAuthenticated && user ? (
+                <>
+                  <div className="px-3 py-2 text-sm text-muted-foreground">
+                    Hi, {user.name}
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full rounded-md px-3 py-2 text-left text-base font-medium transition-colors hover:bg-accent"
                   >
-                    Login
-                  </Link>
-                )}
-              </>
-            )}
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <Link
+                  href="/login"
+                  className="block rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-accent"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Login
+                </Link>
+              ))}
           </div>
         </div>
       )}
