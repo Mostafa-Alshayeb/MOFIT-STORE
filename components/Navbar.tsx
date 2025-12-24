@@ -163,13 +163,7 @@ export function Navbar() {
             >
               All Products
             </Link>
-            <Link
-              href="/favorites"
-              className="block rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-accent"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Favorites
-            </Link>
+            
 
             {authMounted &&
               (isAuthenticated && user ? (
